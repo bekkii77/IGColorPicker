@@ -163,6 +163,13 @@ open class ColorPickerView: UIView, UICollectionViewDelegate, UICollectionViewDa
         colorPickerCell.checkbox.setCheckState(.unchecked, animated: animated)
     }
 
+    public func deselectColor(at index:Int, animated: Bool) {
+        let deselectIndex = IndexPath(item: index, section: 0)
+        guard let colorPickerCell = collectionView.cellForItem(at: deselectIndex) as? ColorPickerCell else { return }
+        
+        colorPickerCell.checkbox.setCheckState(.unchecked, animated: animated)
+    }
+
     // MARK: - UICollectionViewDataSource
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -199,7 +206,12 @@ open class ColorPickerView: UIView, UICollectionViewDelegate, UICollectionViewDa
     }
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        var cellsToReload = [indexPath]
+        if let selected = _indexOfSelectedColor {
+            cellsToReload.append(IndexPath(item: selected, section: 0))
+        }
         self._selectColor(at: indexPath, animated: true)
+        collectionView.reloadItems(at: cellsToReload)
     }
     
     public func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
